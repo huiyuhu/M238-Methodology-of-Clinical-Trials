@@ -1,0 +1,176 @@
+---
+title: "M238_HW1"
+author: "Huiyu (Joyce)"
+date: "4/8/2019"
+output: html_document
+---
+
+## Problem 1
+(1) Using a convenient statistical package such as R, conduct a simulation study to find the type I error rate of the above group sequential test, the probability under H0 that $\lvert Z_k \rvert >1.96$ for at least one k, k = 1;...; 5.
+
+$$ X_A \sim N(\mu_A, 1); X_B \sim N(\mu_B, 1)$$ 
+- Assume $\mu_A = \mu_B = 3$ (under H0), conduct following simulation study. 
+
+```{r}
+h <- 1:10000 
+for (a in 1:10000) {
+X.A <- rnorm(50, 3, 1)
+X.B <- rnorm(50, 3, 1)
+#sum.A <- sum(X.A)
+#sum.B <- sum(X.B)
+# divided into k = 5 equally sized groups
+data.A <- matrix(X.A, nrow = 5, ncol = 10)
+data.B <- matrix(X.B, nrow = 5, ncol = 10)
+for (i in 1:5){
+  mk <- i*10
+  z <- (1/sqrt(2*mk))*(sum(X.A[1:mk]) - sum(X.B[1:mk]))
+  if (abs(z) >= 1.96) { 
+    h[a] <- 1 
+    break
+    } 
+  h[a] <- 0
+}
+}
+sum(h)/10000
+```
+
+- By simulate group sequential test as above, the type I error is 0.1382 which is close to 0.14 (result on lecture slides)
+
+(2) Find the power of the above group sequential test when $ \mu_A - \mu_B$ = 0.1, 0.5, 1.0, 1.5, 2.0
+```{r}
+m.a <- 5
+d <- c(0.1, 0.5, 1.0, 1.5, 2.0)
+h <- 1:10000 
+power <- c(0,0,0,0,0)
+for(b in 1:5){
+  m.b <- m.a - d[b]
+  for(a in 1:10000) {
+    X.A <- rnorm(50, m.a, 1)
+    X.B <- rnorm(50, m.b, 1) 
+    data.A <- matrix(X.A, nrow = 5, ncol = 10)
+    data.B <- matrix(X.B, nrow = 5, ncol = 10)
+    for (i in 1:5){
+      mk <- i*10
+      z <- (1/sqrt(2*mk))*(sum(X.A[1:mk]) - sum(X.B[1:mk]))
+      if (abs(z) >= 1.96) {
+        h[a] <- 1
+        break
+      } 
+      h[a] <- 0
+    }
+  }
+  power[b] <- sum(h)/10000
+}
+print(power)
+```
+
+(3) Find the expected terminating sample size for the above group sequential test when $ \mu_A - \mu_B$ = 1.0
+```{r}
+d <- 1.0 
+m.a <- 5
+m.b <- m.a - d
+size <- rep(50, 10000)
+sq <- rep(5, 10000)
+for(a in 1:10000) {
+  X.A <- rnorm(50, m.a, 1)
+  X.B <- rnorm(50, m.b, 1) 
+  data.A <- matrix(X.A, nrow = 5, ncol = 10)
+  data.B <- matrix(X.B, nrow = 5, ncol = 10)
+  for (i in 1:5){
+    mk <- i*10
+    z <- (1/sqrt(2*mk))*(sum(X.A[1:mk]) - sum(X.B[1:mk]))
+    if (abs(z) >= 1.96) {
+      size[a] <- mk
+      sq[a] <- i
+      break
+    }
+    }
+}
+print(mean(size))
+```
+
+## Problem 2: 
+Repeat problem 1 for the following group sequential test
+(1) 
+```{r}
+h <- 1:10000 
+for (a in 1:10000) {
+  X.A <- rnorm(50, 3, 1)
+  X.B <- rnorm(50, 3, 1)
+# divided into k = 5 equally sized groups
+  for (i in 1:5){
+    mk <- i*10
+    z <- (1/sqrt(2*mk))*(sum(X.A[1:mk]) - sum(X.B[1:mk]))
+    if (i < 5) {
+      if (abs(z) >= 3) {
+        h[a] <- 1
+        break
+        }
+    }else{
+      if (abs(z) >= 1.96){
+        h[a] <- 1
+        break
+      } else {h[a] <- 0}
+      } 
+  }
+}
+sum(h)/10000
+```
+(2) 
+```{r}
+m.a <- 5
+d <- c(0.1, 0.5, 1.0, 1.5, 2.0)
+h <- 1:10000 
+power <- c(0,0,0,0,0)
+for(b in 1:5){
+  m.b <- m.a - d[b]
+  for(a in 1:10000) {
+    X.A <- rnorm(50, m.a, 1)
+    X.B <- rnorm(50, m.b, 1) 
+    for (i in 1:5){
+      mk <- i*10
+      z <- (1/sqrt(2*mk))*(sum(X.A[1:mk]) - sum(X.B[1:mk]))
+      if (i < 5) {
+        if (abs(z) >= 3) {
+          h[a] <- 1
+          break
+        }
+      }
+      else {
+        if (abs(z) >= 1.96){
+          h[a] <- 1
+          break
+        } else {h[a] <- 0}
+      }
+    }
+  }
+  power[b] <- sum(h)/10000
+}
+power
+```
+(3)
+```{r}
+d <- 1.0 
+m.a <- 5
+m.b <- m.a - d
+size <- rep(50, 10000)
+sq <- rep(5, 10000)
+for(a in 1:10000) {
+  X.A <- rnorm(50, m.a, 1)
+  X.B <- rnorm(50, m.b, 1) 
+  data.A <- matrix(X.A, nrow = 5, ncol = 10)
+  data.B <- matrix(X.B, nrow = 5, ncol = 10)
+  for (i in 1:5){
+    mk <- i*10
+      z <- (1/sqrt(2*mk))*(sum(X.A[1:mk]) - sum(X.B[1:mk]))
+      if (i < 5) {
+        if (abs(z) >= 3) {
+          size[a] <- mk
+          break
+        }
+      } 
+  }
+}
+print(mean(size))
+```
+
