@@ -9,6 +9,7 @@ output: html_document
 (1) Using a convenient statistical package such as R, conduct a simulation study to find the type I error rate of the above group sequential test, the probability under H0 that $\lvert Z_k \rvert >1.96$ for at least one k, k = 1;...; 5.
 
 $$ X_A \sim N(\mu_A, 1); X_B \sim N(\mu_B, 1)$$ 
+
 - Assume $\mu_A = \mu_B = 3$ (under H0), conduct following simulation study. 
 
 ```{r}
@@ -34,9 +35,10 @@ for (i in 1:5){
 sum(h)/10000
 ```
 
-- By simulate group sequential test as above, the type I error is 0.1382 which is close to 0.14 (result on lecture slides)
+- By simulate group sequential test as above, the type I error is close to 0.14 (same as result on lecture slides)
 
 (2) Find the power of the above group sequential test when $ \mu_A - \mu_B$ = 0.1, 0.5, 1.0, 1.5, 2.0
+
 ```{r}
 m.a <- 5
 d <- c(0.1, 0.5, 1.0, 1.5, 2.0)
@@ -64,6 +66,8 @@ for(b in 1:5){
 print(power)
 ```
 
+- By simulating the data above, the power for $ \mu_A - \mu_B$ with 0.1, 0.5, 1.0, 1.5, 2.0 are about `0.18, 0.77, 0.99, 1.00, 1.00`
+
 (3) Find the expected terminating sample size for the above group sequential test when $ \mu_A - \mu_B$ = 1.0
 ```{r}
 d <- 1.0 
@@ -89,8 +93,11 @@ for(a in 1:10000) {
 print(mean(size))
 ```
 
+- By simulating the data above, expected terminating sample size are arround `15`. 
+
 ## Problem 2: 
-Repeat problem 1 for the following group sequential test
+Repeat problem 1 for the following group sequential test. 
+
 (1) 
 ```{r}
 h <- 1:10000 
@@ -116,6 +123,9 @@ for (a in 1:10000) {
 }
 sum(h)/10000
 ```
+
+- By simulate group sequential test as above, the type I error is close to `0.05`
+
 (2) 
 ```{r}
 m.a <- 5
@@ -148,6 +158,9 @@ for(b in 1:5){
 }
 power
 ```
+
+- By simulating the data above, the power for $ \mu_A - \mu_B$ with 0.1, 0.5, 1.0, 1.5, 2.0 are about `0.07, 0.70, 0.99, 1.00, 1.00`
+
 (3)
 ```{r}
 d <- 1.0 
@@ -174,3 +187,4 @@ for(a in 1:10000) {
 print(mean(size))
 ```
 
+- By simulating the data above, expected terminating sample size are arround `24`. 
